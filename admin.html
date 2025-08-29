@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINZAP - Panel de Administración</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-cog"></i>
+                <h1>WINZAP - ADMIN</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Ver Sitio Público
+                </a>
+                <a href="#" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Admin Login -->
+    <section id="admin-login" class="admin-login-section">
+        <div class="container">
+            <div class="login-container">
+                <div class="login-form">
+                    <div class="login-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <h2>Panel de Administración</h2>
+                        <p>WINZAP</p>
+                    </div>
+                    <input type="password" id="admin-password" placeholder="Contraseña de administrador" onkeypress="if(event.key==='Enter') adminLogin()">
+                    <button onclick="adminLogin()" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Acceder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section id="admin-dashboard" class="admin-dashboard" style="display: none;">
+        <div class="container">
+            <!-- Dashboard Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <i class="fas fa-file-alt"></i>
+                    <div class="stat-info">
+                        <h3>Total Archivos</h3>
+                        <span class="stat-number" id="total-files">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-download"></i>
+                    <div class="stat-info">
+                        <h3>Total Descargas</h3>
+                        <span class="stat-number" id="total-downloads">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <h3>Visitantes Hoy</h3>
+                        <span class="stat-number" id="visitors-today">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-eye"></i>
+                    <div class="stat-info">
+                        <h3>Vistas de Anuncios</h3>
+                        <span class="stat-number" id="ad-views">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showAdminTab('upload')">
+                    <i class="fas fa-upload"></i> Subir Archivo
+                </button>
+                <button class="tab-btn" onclick="showAdminTab('manage')">
+                    <i class="fas fa-cog"></i> Gestionar Archivos
+                </button>
+                <button class="tab-btn" onclick="showAdminTab('settings')">
+                    <i class="fas fa-sliders-h"></i> Configuración
+                </button>
+                <button class="tab-btn" onclick="showAdminTab('analytics')">
+                    <i class="fas fa-chart-bar"></i> Analíticas
+                </button>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload-tab" class="admin-tab-content active">
+                <div class="upload-section-admin">
+                    <h3><i class="fas fa-cloud-upload-alt"></i> Subir Nuevo Archivo</h3>
+                    <form id="admin-upload-form" class="upload-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="admin-title">Título del archivo:</label>
+                                <input type="text" id="admin-title" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin-category">Categoría:</label>
+                                <select id="admin-category" name="category" onchange="toggleCustomCategory()">
+                                    <option value="http-custom">HTTP CUSTOM</option>
+                                    <option value="zivpn">ZIVPN</option>
+                                    <option value="npv-tunnel">NPV TUNNEL</option>
+                                    <option value="nexprime">NEXPRIME</option>
+                                    <option value="http-injector">HTTP INJECTOR</option>
+                                    <option value="acm-custom-socksip">ACM CUSTOM SOCKSIP</option>
+                                    <option value="documentos">Documentos</option>
+                                    <option value="software">Software</option>
+                                    <option value="multimedia">Multimedia</option>
+                                    <option value="recursos">Recursos</option>
+                                    <option value="herramientas">Herramientas</option>
+                                    <option value="educativo">Educativo</option>
+                                    <option value="personalizada">Personalizada...</option>
+                                </select>
+                                <input type="text" id="admin-custom-category" name="custom-category" placeholder="Escribe tu categoría personalizada" style="display: none; margin-top: 0.5rem;">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="admin-description">Descripción:</label>
+                            <textarea id="admin-description" name="description" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="admin-cover-image">Imagen de portada:</label>
+                                <input type="file" id="admin-cover-image" name="cover-image" accept="image/*" required>
+                                <div class="image-preview" id="admin-image-preview"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="admin-file">Archivo a subir:</label>
+                                <input type="file" id="admin-file" name="file" required>
+                                <div class="file-info" id="admin-file-info"></div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-upload"></i> Publicar Archivo
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Tab -->
+            <div id="manage-tab" class="admin-tab-content">
+                <div class="manage-section">
+                    <div class="manage-header">
+                        <h3><i class="fas fa-list"></i> Gestionar Archivos</h3>
+                        <div class="manage-actions">
+                            <input type="text" id="manage-search" placeholder="Buscar archivos...">
+                            <button onclick="refreshFilesList()" class="refresh-btn">
+                                <i class="fas fa-sync-alt"></i> Actualizar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="files-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Título</th>
+                                    <th>Categoría</th>
+                                    <th>Descargas</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-files-list">
+                                <!-- Files will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="admin-tab-content">
+                <div class="settings-section">
+                    <h3><i class="fas fa-sliders-h"></i> Configuración del Sitio</h3>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <h4><i class="fas fa-ad"></i> Configuración de Anuncios</h4>
+                            <div class="form-group">
+                                <label for="adsense-id">Google AdSense ID:</label>
+                                <input type="text" id="adsense-id" placeholder="ca-pub-xxxxxxxxxx">
+                            </div>
+                            <button onclick="saveAdSettings()" class="save-btn">
+                                <i class="fas fa-save"></i> Guardar AdSense
+                            </button>
+                        </div>
+
+                        <div class="setting-card">
+                            <h4><i class="fas fa-palette"></i> Personalización</h4>
+                            <div class="form-group">
+                                <label for="site-name">Nombre del Sitio:</label>
+                                <input type="text" id="site-name" placeholder="WINZAP" value="WINZAP">
+                            </div>
+                            <div class="form-group">
+                                <label for="site-title">Título de la Página:</label>
+                                <input type="text" id="site-title" placeholder="WINZAP - Plataforma de archivos digitales" value="WINZAP - Plataforma de archivos digitales">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero-title">Título Principal (Hero):</label>
+                                <input type="text" id="hero-title" placeholder="Comparte y Descarga Archivos" value="Comparte y Descarga Archivos">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero-subtitle">Subtítulo Principal:</label>
+                                <textarea id="hero-subtitle" rows="3" placeholder="La mejor plataforma para compartir tus archivos digitales de forma rápida y segura.">La mejor plataforma para compartir tus archivos digitales de forma rápida y segura.</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="about-title">Título Sección Acerca de:</label>
+                                <input type="text" id="about-title" placeholder="Acerca de WINZAP" value="Acerca de WINZAP">
+                            </div>
+                            <div class="form-group">
+                                <label for="about-description">Descripción Acerca de:</label>
+                                <textarea id="about-description" rows="4" placeholder="WINZAP es una plataforma innovadora...">WINZAP es una plataforma innovadora diseñada para facilitar el intercambio de archivos digitales. Ofrecemos una experiencia segura y rápida para compartir contenido de alta calidad.</textarea>
+                            </div>
+                            <button class="save-btn" onclick="adminPanel.saveSiteConfig()">
+                                <i class="fas fa-save"></i> Guardar Configuración del Sitio
+                            </button>
+                        </div>
+
+                        <div class="setting-card">
+                            <h4><i class="fas fa-shield-alt"></i> Seguridad</h4>
+                            <div class="form-group">
+                                <label for="new-password">Nueva Contraseña Admin:</label>
+                                <input type="password" id="new-password" placeholder="Nueva contraseña">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirmar Contraseña:</label>
+                                <input type="password" id="confirm-password" placeholder="Confirmar contraseña">
+                            </div>
+                            <button onclick="changePassword()" class="save-btn">
+                                <i class="fas fa-key"></i> Cambiar Contraseña
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="admin-tab-content">
+                <div class="analytics-section">
+                    <h3><i class="fas fa-chart-bar"></i> Analíticas y Estadísticas</h3>
+                    
+                    <div class="analytics-grid">
+                        <div class="chart-card">
+                            <h4>Descargas por Día</h4>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Gráfico de descargas diarias</p>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <h4>Archivos Más Populares</h4>
+                            <div id="popular-files-list" class="popular-list">
+                                <!-- Popular files will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <h4>Categorías Más Descargadas</h4>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>Gráfico de categorías</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="admin-footer">
+        <div class="container">
+            <p>&copy; 2024 WINZAP - Panel de Administración</p>
+        </div>
+    </footer>
+
+    <script src="admin-fixed.js"></script>
+</body>
+</html>

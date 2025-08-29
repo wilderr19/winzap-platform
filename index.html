@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINZAP - Plataforma de archivos digitales</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-cloud-download-alt"></i>
+                <h1>WINZAP</h1>
+            </div>
+            <nav class="nav">
+                <a href="#home">Inicio</a>
+                <a href="#about">Acerca de</a>
+                <a href="#files">Archivos</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Descubre y descarga archivos de todo tipo</h2>
+                <p>Explora documentos, software, recursos y contenido digital compartido por la comunidad.</p>
+                <button class="cta-btn" onclick="scrollToSection('files')">
+                    <i class="fas fa-search"></i> Explorar Archivos
+                </button>
+            </div>
+        </div>
+        <!-- Ad Space -->
+        <div class="ad-banner">
+            <div class="ad-placeholder">
+                <p>Espacio Publicitario 728x90</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2><i class="fas fa-info-circle"></i> Sobre WINZAP</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Plataforma para compartir y descargar archivos de todo tipo. Desde documentos y software hasta recursos multimedia y herramientas útiles.</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-download"></i>
+                            <h4>Descargas Rápidas</h4>
+                            <p>Enlaces directos sin esperas</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Archivos Seguros</h4>
+                            <p>Contenido verificado y libre de virus</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-star"></i>
+                            <h4>Contenido Exclusivo</h4>
+                            <p>Archivos cuidadosamente seleccionados y compartidos por WINZAP</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Files Section -->
+    <section id="files" class="files-section">
+        <div class="container">
+            <h2><i class="fas fa-folder-open"></i> Archivos Disponibles</h2>
+            <div class="search-bar">
+                <input type="text" id="search" placeholder="Buscar archivos...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="files-grid" id="files-grid">
+                <!-- Files will be loaded here dynamically -->
+            </div>
+        </div>
+        
+        <!-- Side Ad -->
+        <div class="side-ad">
+            <div class="ad-placeholder">
+                <p>Anuncio 300x250</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>WINZAP</h3>
+                    <p>La plataforma definitiva para compartir archivos digitales.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="#home">Inicio</a></li>
+                        <li><a href="#about">Acerca de</a></li>
+                        <li><a href="#files">Archivos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <div class="social-links">
+                        <a href="https://www.youtube.com/@winzapgamer" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://t.me/canalwinzapgamer" target="_blank"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 WINZAP. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Ad -->
+    <div class="bottom-ad">
+        <div class="ad-placeholder">
+            <p>Anuncio Inferior 728x90</p>
+        </div>
+    </div>
+
+    <!-- Download Modal -->
+    <div id="download-modal" class="download-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeDownloadModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-download"></i> Preparando descarga</h3>
+                <button class="modal-close" onclick="closeDownloadModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="file-info-modal">
+                    <img id="modal-file-image" src="" alt="">
+                    <div class="file-details">
+                        <h4 id="modal-file-title"></h4>
+                        <p id="modal-file-description"></p>
+                        <div class="file-meta-modal">
+                            <span id="modal-file-size"></span>
+                            <span id="modal-file-type"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Espacio para anuncio -->
+                <div class="download-ad-space">
+                    <div class="ad-placeholder">
+                        <p>Anuncio - Espera 5 segundos para descargar</p>
+                        <div class="ad-timer">
+                            <div class="timer-circle">
+                                <span id="countdown">5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="download-actions">
+                    <button id="download-btn" class="download-btn-modal" disabled>
+                        <i class="fas fa-spinner fa-spin"></i> Preparando descarga...
+                    </button>
+                    <button class="cancel-btn" onclick="closeDownloadModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="ads.js"></script>
+</body>
+</html>
