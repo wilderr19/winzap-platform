@@ -19,8 +19,7 @@ class WinzapGamer {
     init() {
         this.setupEventListeners();
         this.loadFiles();
-        this.updateStats();
-        this.trackVisitor();
+        this.setupStorageSync();
     }
 
     setupEventListeners() {
@@ -414,6 +413,19 @@ class WinzapGamer {
         
         // Notificar al panel admin si está abierto
         this.notifyAdminPanel();
+    }
+
+    setupStorageSync() {
+        // Escuchar cambios de storage entre pestañas
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'winzap_files') {
+                this.files = JSON.parse(e.newValue) || [];
+                this.loadFiles();
+            }
+            if (e.key === 'winzap_stats') {
+                // Actualizar estadísticas si es necesario
+            }
+        });
     }
 
     notifyAdminPanel() {

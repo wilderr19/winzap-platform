@@ -86,6 +86,16 @@ class AdminPanel {
                 this.loadAdminFiles();
             }
         }, 1000);
+
+        // Escuchar cambios de storage entre pestañas
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'winzap_files' || e.key === 'winzap_stats') {
+                this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+                this.stats = JSON.parse(localStorage.getItem('winzap_stats')) || this.stats;
+                this.updateStats();
+                this.loadAdminFiles();
+            }
+        });
     }
 
     uploadFile() {
@@ -142,6 +152,9 @@ class AdminPanel {
         this.updateStats();
         this.loadAdminFiles();
         this.showMessage('Archivo subido exitosamente', 'success');
+        
+        // Notificar a otras pestañas del cambio
+        this.notifyOtherTabs();
         
         // Limpiar formulario
         document.getElementById('upload-form').reset();
@@ -282,7 +295,25 @@ class AdminPanel {
             this.updateStats();
             this.loadAdminFiles();
             this.showMessage('Archivo eliminado', 'success');
+            
+            // Notificar a otras pestañas del cambio
+            this.notifyOtherTabs();
         }
+    }
+
+    notifyOtherTabs() {
+        // Disparar evento storage manualmente para sincronizar entre pestañas
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'winzap_files',
+            newValue: JSON.stringify(this.files),
+            storageArea: localStorage
+        }));
+        
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'winzap_stats', 
+            newValue: JSON.stringify(this.stats),
+            storageArea: localStorage
+        }));
     }
 
     updateStats() {
