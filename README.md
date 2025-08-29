@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎮 WINZAP GAMER
 
 **La plataforma definitiva para compartir archivos gaming con monetización integrada**
@@ -197,3 +198,7 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 **¡Hecho con ❤️ para la comunidad gamer!**
 
 *WINZAP GAMER - Donde los gamers comparten su pasión*
+=======
+# winzap-platform
+WINZAP - Plataforma de archivos digitales
+>>>>>>> 22cbbb1e4beb2846153509c43e326b94d9dbe762
