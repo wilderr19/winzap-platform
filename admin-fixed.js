@@ -73,27 +73,23 @@ class AdminPanel {
             this.loadAdminFiles();
         });
 
-        // Verificar cambios en localStorage cada segundo
-        setInterval(() => {
-            const currentFiles = JSON.parse(localStorage.getItem('winzap_files')) || [];
-            const currentStats = JSON.parse(localStorage.getItem('winzap_stats')) || this.stats;
-            
-            if (JSON.stringify(currentFiles) !== JSON.stringify(this.files) || 
-                JSON.stringify(currentStats) !== JSON.stringify(this.stats)) {
-                this.files = currentFiles;
-                this.stats = currentStats;
-                this.updateStats();
-                this.loadAdminFiles();
-            }
-        }, 1000);
+        // Eliminado el polling automático que causaba conflictos
 
-        // Escuchar cambios de storage entre pestañas
+        // Escuchar cambios de storage entre pestañas - solo actualizar si realmente cambió
         window.addEventListener('storage', (e) => {
-            if (e.key === 'winzap_files' || e.key === 'winzap_stats') {
-                this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
-                this.stats = JSON.parse(localStorage.getItem('winzap_stats')) || this.stats;
-                this.updateStats();
-                this.loadAdminFiles();
+            if (e.key === 'winzap_files') {
+                const newFiles = JSON.parse(e.newValue) || [];
+                if (JSON.stringify(newFiles) !== JSON.stringify(this.files)) {
+                    this.files = newFiles;
+                    this.loadAdminFiles();
+                }
+            }
+            if (e.key === 'winzap_stats') {
+                const newStats = JSON.parse(e.newValue) || this.stats;
+                if (JSON.stringify(newStats) !== JSON.stringify(this.stats)) {
+                    this.stats = newStats;
+                    this.updateStats();
+                }
             }
         });
     }
@@ -147,8 +143,11 @@ class AdminPanel {
     addFileToList(file) {
         this.files.push(file);
         this.stats.totalFiles = this.files.length;
-        this.saveFiles();
-        this.saveStats();
+        
+        // Guardar directamente en localStorage
+        localStorage.setItem('winzap_files', JSON.stringify(this.files));
+        localStorage.setItem('winzap_stats', JSON.stringify(this.stats));
+        
         this.updateStats();
         this.loadAdminFiles();
         this.showMessage('Archivo subido exitosamente', 'success');
@@ -288,15 +287,20 @@ class AdminPanel {
 
     deleteFile(fileId) {
         if (confirm('¿Estás seguro de que quieres eliminar este archivo? Esta acción no se puede deshacer.')) {
+            // Eliminar archivo del array
             this.files = this.files.filter(f => f.id !== fileId);
             this.stats.totalFiles = this.files.length;
-            this.saveFiles();
-            this.saveStats();
+            
+            // Guardar cambios inmediatamente
+            localStorage.setItem('winzap_files', JSON.stringify(this.files));
+            localStorage.setItem('winzap_stats', JSON.stringify(this.stats));
+            
+            // Actualizar UI
             this.updateStats();
             this.loadAdminFiles();
             this.showMessage('Archivo eliminado', 'success');
             
-            // Notificar a otras pestañas del cambio
+            // Forzar actualización en otras pestañas
             this.notifyOtherTabs();
         }
     }

@@ -8,8 +8,9 @@ class WinzapGamer {
             visitorsToday: 0
         };
         
-        // Si no hay archivos, agregar archivos de ejemplo
-        if (this.files.length === 0) {
+        // Si no hay archivos Y no hay datos previos guardados, agregar archivos de ejemplo
+        const hasStoredFiles = localStorage.getItem('winzap_files');
+        if (this.files.length === 0 && !hasStoredFiles) {
             this.addSampleFiles();
         }
         
