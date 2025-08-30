@@ -292,6 +292,22 @@ class AdminPanel {
         `).join('');
     }
 
+    getCategoryName(category) {
+        const categoryNames = {
+            'http-custom': 'HTTP CUSTOM',
+            'zivpn': 'ZIVPN',
+            'npv-tunnel': 'NPV TUNNEL',
+            'nexprime': 'NEXPRIME',
+            'http-injector': 'HTTP INJECTOR',
+            'acm-custom-socksip': 'ACM CUSTOM SOCKSIP',
+            'documentos': 'Documentos',
+            'software': 'Software',
+            'multimedia': 'Multimedia',
+            'recursos': 'Recursos'
+        };
+        return categoryNames[category] || category.toUpperCase();
+    }
+
     editFile(fileId) {
         const file = this.files.find(f => f.id === fileId);
         if (file) {

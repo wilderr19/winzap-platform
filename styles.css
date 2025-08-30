@@ -5,6 +5,13 @@
     box-sizing: border-box;
 }
 
+/* Responsive breakpoints */
+:root {
+    --mobile: 480px;
+    --tablet: 768px;
+    --desktop: 1024px;
+}
+
 :root {
     --primary-color: #ff6b35;
     --secondary-color: #1a1a2e;
@@ -173,6 +180,160 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .header .container {
+        padding: 0.8rem 15px;
+    }
+    
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(26, 26, 46, 0.98);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .nav.active {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--text-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+    
+    .hero {
+        padding: 2rem 0;
+        margin-top: 70px;
+    }
+    
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .cta-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .feature {
+        padding: 1.5rem;
+    }
+    
+    .side-ad {
+        display: none;
+    }
+    
+    .ad-banner .ad-placeholder {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .files-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .file-card {
+        padding: 1rem;
+    }
+    
+    .file-image {
+        height: 150px;
+    }
+    
+    .file-title {
+        font-size: 1rem;
+    }
+    
+    .file-description {
+        font-size: 0.85rem;
+    }
+    
+    .download-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .search-bar {
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-bar input {
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+    }
+    
+    .download-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .download-btn-modal,
+    .cancel-btn {
+        width: 100%;
+        padding: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h2 {
+        font-size: 1.8rem;
+    }
+    
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+    
+    .feature i {
+        font-size: 2rem;
+    }
+    
+    .file-card {
+        padding: 0.8rem;
+    }
+    
+    .file-image {
+        height: 120px;
+    }
+    
+    .modal-content {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+    }
 }
 
 /* About Section */

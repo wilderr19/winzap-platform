@@ -15,7 +15,26 @@ class WinzapGamer {
     async init() {
         this.setupEventListeners();
         
-        // Inicializar Firebase
+        // Verificar conexión con VPS API
+        if (window.apiConfig) {
+            const health = await window.apiConfig.checkHealth();
+            if (health.status === 'OK') {
+                console.log('🌐 VPS API conectado - usando servidor remoto');
+                this.loadFilesFromAPI();
+                this.registerVisit();
+            } else {
+                console.log('⚠️ VPS API no disponible, intentando Firebase...');
+                this.initFirebaseBackup();
+            }
+        } else {
+            this.initFirebaseBackup();
+        }
+        
+        this.setupStorageSync();
+    }
+
+    async initFirebaseBackup() {
+        // Inicializar Firebase como backup
         if (window.FirebaseManager) {
             this.firebaseManager = new window.FirebaseManager();
             const initialized = await this.firebaseManager.init();
@@ -31,8 +50,28 @@ class WinzapGamer {
             console.log('📱 Firebase no disponible - usando localStorage');
             this.loadFilesFromLocal();
         }
-        
-        this.setupStorageSync();
+    }
+
+    // Cargar archivos desde VPS API
+    async loadFilesFromAPI() {
+        try {
+            const response = await window.apiConfig.getFiles({ limit: 50 });
+            this.files = response.files || [];
+            this.loadFiles();
+            console.log(`📁 Cargados ${this.files.length} archivos desde VPS`);
+        } catch (error) {
+            console.error('Error cargando desde API:', error);
+            this.initFirebaseBackup();
+        }
+    }
+
+    // Registrar visita en VPS
+    async registerVisit() {
+        try {
+            await window.apiConfig.registerVisit();
+        } catch (error) {
+            console.error('Error registrando visita:', error);
+        }
     }
 
     // Cargar archivos desde Firebase
@@ -81,6 +120,18 @@ class WinzapGamer {
         const searchInput = document.getElementById('search');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => this.searchFiles(e.target.value));
+        }
+
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileMenuBtn && navMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = mobileMenuBtn.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
         }
 
     }
