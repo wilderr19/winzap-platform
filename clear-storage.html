@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Storage - WINZAP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 50px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #cc3333;
+        }
+        .success {
+            background: #44ff44;
+            color: black;
+        }
+        .success:hover {
+            background: #33cc33;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ Limpiar Storage de WINZAP</h1>
+        <p>Esta herramienta eliminará todos los archivos y datos almacenados en localStorage.</p>
+        
+        <button onclick="clearStorage()">Limpiar Todo el Storage</button>
+        <button onclick="clearFiles()">Solo Limpiar Archivos</button>
+        
+        <div id="result"></div>
+        
+        <br><br>
+        <a href="index.html" style="color: #4CAF50;">← Volver al sitio principal</a>
+        <br>
+        <a href="admin.html" style="color: #FF5722;">← Ir al panel admin</a>
+    </div>
+
+    <script>
+        function clearStorage() {
+            localStorage.clear();
+            document.getElementById('result').innerHTML = '<p style="color: #44ff44; margin-top: 20px;">✅ Todo el localStorage ha sido limpiado completamente.</p>';
+        }
+        
+        function clearFiles() {
+            localStorage.removeItem('winzap_files');
+            localStorage.removeItem('winzap_stats');
+            document.getElementById('result').innerHTML = '<p style="color: #44ff44; margin-top: 20px;">✅ Archivos y estadísticas eliminados.</p>';
+        }
+        
+        // Mostrar contenido actual del storage
+        window.onload = function() {
+            const files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+            const stats = JSON.parse(localStorage.getItem('winzap_stats')) || {};
+            
+            document.getElementById('result').innerHTML = `
+                <div style="margin-top: 20px; text-align: left; background: #333; padding: 15px; border-radius: 5px;">
+                    <h3>📊 Estado actual del storage:</h3>
+                    <p><strong>Archivos:</strong> ${files.length}</p>
+                    <p><strong>Descargas totales:</strong> ${stats.totalDownloads || 0}</p>
+                    <p><strong>Visitantes hoy:</strong> ${stats.visitorsToday || 0}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

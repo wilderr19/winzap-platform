@@ -8,11 +8,7 @@ class WinzapGamer {
             visitorsToday: 0
         };
         
-        // Si no hay archivos Y no hay datos previos guardados, agregar archivos de ejemplo
-        const hasStoredFiles = localStorage.getItem('winzap_files');
-        if (this.files.length === 0 && !hasStoredFiles) {
-            this.addSampleFiles();
-        }
+        // No agregar archivos de muestra automáticamente
         
         this.init();
     }
@@ -145,49 +141,7 @@ class WinzapGamer {
         });
     }
 
-    addSampleFiles() {
-        const sampleFiles = [
-            {
-                id: 1,
-                title: "HTTP Custom Pro",
-                description: "Configuración avanzada para HTTP Custom con múltiples payloads y servidores optimizados.",
-                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234CAF50;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%232E7D32;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='200' fill='url(%23grad1)'/%3E%3Ccircle cx='150' cy='100' r='40' fill='white' opacity='0.2'/%3E%3Ctext x='150' y='105' text-anchor='middle' dy='.3em' fill='white' font-family='Arial' font-size='18' font-weight='bold'%3EHTTP CUSTOM%3C/text%3E%3C/svg%3E",
-                fileName: "http-custom-pro.hc",
-                fileSize: "2.3 MB",
-                fileType: "application/octet-stream",
-                uploadDate: "29/8/2024",
-                downloads: 127,
-                category: "http-custom"
-            },
-            {
-                id: 2,
-                title: "ZiVPN Premium Config",
-                description: "Configuración premium para ZiVPN con servidores de alta velocidad y conexión estable.",
-                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Cdefs%3E%3ClinearGradient id='grad2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23FF5722;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23D84315;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='200' fill='url(%23grad2)'/%3E%3Cpolygon points='150,60 180,120 120,120' fill='white' opacity='0.3'/%3E%3Ctext x='150' y='150' text-anchor='middle' dy='.3em' fill='white' font-family='Arial' font-size='20' font-weight='bold'%3EZiVPN%3C/text%3E%3C/svg%3E",
-                fileName: "zivpn-premium.zip",
-                fileSize: "1.8 MB",
-                fileType: "application/zip",
-                uploadDate: "28/8/2024",
-                downloads: 89,
-                category: "zivpn"
-            },
-            {
-                id: 3,
-                title: "NPV Tunnel Ultimate",
-                description: "Configuración completa para NPV Tunnel con payloads actualizados y servidores rápidos.",
-                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Cdefs%3E%3ClinearGradient id='grad3' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23E91E63;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23AD1457;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='200' fill='url(%23grad3)'/%3E%3Crect x='120' y='80' width='60' height='40' fill='white' opacity='0.3' rx='5'/%3E%3Ctext x='150' y='145' text-anchor='middle' dy='.3em' fill='white' font-family='Arial' font-size='16' font-weight='bold'%3ENPV TUNNEL%3C/text%3E%3C/svg%3E",
-                fileName: "npv-tunnel-ultimate.npv",
-                fileSize: "3.1 MB",
-                fileType: "application/octet-stream",
-                uploadDate: "27/8/2024",
-                downloads: 234,
-                category: "npv-tunnel"
-            }
-        ];
-
-        this.files = sampleFiles;
-        this.saveFiles();
-    }
+    // Función eliminada - ya no se agregan archivos de muestra automáticamente
 
     loadFiles() {
         console.log('Cargando archivos:', this.files);
