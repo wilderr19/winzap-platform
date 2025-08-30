@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Caché - WINZAP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 50px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        .success {
+            background: #4CAF50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        .instructions {
+            background: #333;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpiar Caché WINZAP</h1>
+        <p>Los archivos ficticios siguen apareciendo por el caché del navegador.</p>
+        
+        <div class="instructions">
+            <h3>📋 Instrucciones para limpiar caché:</h3>
+            <ol>
+                <li><strong>Método 1:</strong> Presiona <code>Ctrl + F5</code> (Windows) o <code>Cmd + Shift + R</code> (Mac)</li>
+                <li><strong>Método 2:</strong> Presiona <code>F12</code> → Click derecho en el botón actualizar → "Vaciar caché y recargar"</li>
+                <li><strong>Método 3:</strong> Abre una ventana incógnita y ve a winzapg.online</li>
+                <li><strong>Método 4:</strong> Usa los botones de abajo</li>
+            </ol>
+        </div>
+
+        <button onclick="clearAllCache()">🗑️ Limpiar Todo el Caché</button>
+        <button onclick="clearWinzapData()">🧹 Limpiar Solo Datos WINZAP</button>
+        <button onclick="forceReload()">🔄 Forzar Recarga</button>
+        
+        <div id="success" class="success">
+            ✅ Caché limpiado. Recargando página...
+        </div>
+
+        <div class="instructions">
+            <h3>⚠️ Si los archivos siguen apareciendo:</h3>
+            <p>Es porque GitHub Pages está propagando los cambios. Puede tardar 5-10 minutos.</p>
+            <p>Los archivos ficticios desaparecerán automáticamente cuando se complete la propagación.</p>
+        </div>
+    </div>
+
+    <script>
+        function clearAllCache() {
+            // Limpiar localStorage
+            localStorage.clear();
+            
+            // Limpiar sessionStorage
+            sessionStorage.clear();
+            
+            // Intentar limpiar caché del service worker si existe
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            
+            // Intentar limpiar caché de la aplicación
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+            
+            showSuccess();
+        }
+
+        function clearWinzapData() {
+            // Limpiar solo datos específicos de WINZAP
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('winzap_')) {
+                    keysToRemove.push(key);
+                }
+            }
+            
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            showSuccess();
+        }
+
+        function forceReload() {
+            // Agregar timestamp para forzar recarga
+            const timestamp = new Date().getTime();
+            window.location.href = window.location.href.split('?')[0] + '?t=' + timestamp;
+        }
+
+        function showSuccess() {
+            document.getElementById('success').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        }
+
+        // Auto-limpiar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de limpieza de caché cargada');
+        });
+    </script>
+</body>
+</html>
