@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpieza Forzada - WINZAP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 50px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #cc3333;
+        }
+        .success {
+            background: #44ff44;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .warning {
+            background: #ff9800;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpieza Forzada WINZAP</h1>
+        
+        <div class="warning">
+            <strong>⚠️ ADVERTENCIA:</strong> Esta herramienta eliminará TODOS los datos y empezará desde cero.
+        </div>
+        
+        <p>Esta herramienta eliminará completamente todos los archivos de prueba y datos guardados.</p>
+        
+        <button onclick="forceClean()">🗑️ LIMPIAR TODO Y EMPEZAR DE CERO</button>
+        
+        <div id="result"></div>
+        
+        <br><br>
+        <a href="index.html" style="color: #4CAF50;">← Volver al sitio principal</a>
+        <br>
+        <a href="admin.html" style="color: #FF5722;">← Ir al panel admin</a>
+        <br>
+        <a href="export-import.html" style="color: #2196F3;">← Importar/Exportar datos</a>
+    </div>
+
+    <script>
+        function forceClean() {
+            if (!confirm('¿ESTÁS SEGURO? Esto eliminará TODOS los datos y no se puede deshacer.')) {
+                return;
+            }
+            
+            if (!confirm('ÚLTIMA CONFIRMACIÓN: Se eliminarán todos los archivos, configuraciones y estadísticas.')) {
+                return;
+            }
+            
+            // Limpiar completamente localStorage
+            localStorage.clear();
+            
+            // Limpiar sessionStorage también
+            sessionStorage.clear();
+            
+            // Limpiar cookies del dominio
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            // Forzar recarga sin caché
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                    });
+                });
+            }
+            
+            document.getElementById('result').innerHTML = `
+                <div class="success">
+                    ✅ LIMPIEZA COMPLETA REALIZADA
+                    <br><br>
+                    <strong>Pasos siguientes:</strong>
+                    <br>1. Cierra todas las pestañas de WINZAP
+                    <br>2. Abre una ventana incógnita
+                    <br>3. Ve a winzapg.online
+                    <br>4. Sube tus archivos desde el panel admin
+                </div>
+            `;
+            
+            // Recargar página después de 3 segundos
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
