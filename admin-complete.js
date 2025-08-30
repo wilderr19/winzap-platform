@@ -362,5 +362,63 @@ class AdminPanel {
     }
 }
 
+// Función global para login
+function adminLogin() {
+    const password = document.getElementById('admin-password').value;
+    const settings = JSON.parse(localStorage.getItem('winzap_settings')) || { adminPassword: 'admin123' };
+    
+    if (password === settings.adminPassword) {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        
+        // Mostrar mensaje de éxito
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = 'Acceso concedido';
+        messageDiv.style.cssText = `
+            position: fixed; top: 20px; right: 20px; padding: 15px 20px;
+            border-radius: 5px; color: white; font-weight: bold; z-index: 10000;
+            background: #4CAF50;
+        `;
+        document.body.appendChild(messageDiv);
+        setTimeout(() => messageDiv.remove(), 2000);
+        
+    } else {
+        // Mostrar mensaje de error
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = 'Contraseña incorrecta';
+        messageDiv.style.cssText = `
+            position: fixed; top: 20px; right: 20px; padding: 15px 20px;
+            border-radius: 5px; color: white; font-weight: bold; z-index: 10000;
+            background: #f44336;
+        `;
+        document.body.appendChild(messageDiv);
+        setTimeout(() => messageDiv.remove(), 3000);
+        
+        document.getElementById('admin-password').value = '';
+    }
+}
+
+// Función para mostrar tabs
+function showAdminTab(tabName) {
+    // Ocultar todas las tabs
+    const tabs = document.querySelectorAll('.admin-tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Mostrar tab seleccionada
+    const selectedTab = document.getElementById(tabName + '-tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Actualizar botones
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    const activeButton = document.querySelector(`[onclick="showAdminTab('${tabName}')"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+}
+
 // Inicializar panel admin
 const adminPanel = new AdminPanel();
