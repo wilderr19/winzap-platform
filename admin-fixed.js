@@ -46,8 +46,20 @@ class AdminPanel {
             });
         }
 
+        // Event listener para vista previa de imagen
+        const imageInput = document.getElementById('admin-cover-image');
+        if (imageInput) {
+            imageInput.addEventListener('change', (e) => this.previewImage(e));
+        }
+
+        // Event listener para información de archivo
+        const fileInput = document.getElementById('admin-file');
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => this.showFileInfo(e));
+        }
+
         // Event listener para categoría personalizada
-        const categorySelect = document.getElementById('file-category');
+        const categorySelect = document.getElementById('admin-category');
         const customCategoryInput = document.getElementById('custom-category');
         
         if (categorySelect && customCategoryInput) {
@@ -321,6 +333,35 @@ class AdminPanel {
             newValue: JSON.stringify(this.stats),
             storageArea: localStorage
         }));
+    }
+
+    previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('admin-image-preview');
+        
+        if (file && preview) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Vista previa" style="max-width: 200px; max-height: 200px; border-radius: 8px;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    showFileInfo(event) {
+        const file = event.target.files[0];
+        const fileInfo = document.getElementById('admin-file-info');
+        
+        if (file && fileInfo) {
+            const size = this.formatFileSize(file.size);
+            fileInfo.innerHTML = `
+                <div style="background: #333; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Archivo seleccionado:</strong><br>
+                    📄 ${file.name}<br>
+                    📊 ${size}
+                </div>
+            `;
+        }
     }
 
     updateStats() {
