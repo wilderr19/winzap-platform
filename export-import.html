@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportar/Importar Datos - WINZAP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #333;
+            border-radius: 8px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .danger {
+            background: #ff4444;
+        }
+        .danger:hover {
+            background: #cc3333;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .info {
+            background: #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #4CAF50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f44336;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #444;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Exportar/Importar Datos WINZAP</h1>
+        
+        <div class="info">
+            <strong>💡 Información:</strong> Esta herramienta te permite transferir tus archivos y configuraciones entre diferentes dominios (localhost ↔ winzapg.online).
+        </div>
+
+        <!-- Estado actual -->
+        <div class="section">
+            <h2>📊 Estado Actual</h2>
+            <div class="stats" id="current-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="files-count">0</div>
+                    <div>Archivos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="downloads-count">0</div>
+                    <div>Descargas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="visitors-count">0</div>
+                    <div>Visitantes</div>
+                </div>
+            </div>
+            <div id="files-list"></div>
+        </div>
+
+        <!-- Exportar -->
+        <div class="section">
+            <h2>📤 Exportar Datos</h2>
+            <p>Exporta todos tus archivos y configuraciones a un archivo JSON:</p>
+            <button onclick="exportData()">Exportar Todos los Datos</button>
+            <button onclick="exportFiles()">Solo Exportar Archivos</button>
+            <div id="export-result"></div>
+        </div>
+
+        <!-- Importar -->
+        <div class="section">
+            <h2>📥 Importar Datos</h2>
+            <p>Pega aquí los datos exportados para importarlos:</p>
+            <textarea id="import-data" placeholder="Pega aquí el JSON exportado..."></textarea>
+            <br>
+            <button onclick="importData()">Importar Datos</button>
+            <button onclick="importFiles()" class="danger">Solo Importar Archivos (Sobrescribir)</button>
+            <div id="import-result"></div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="section">
+            <h2>🔗 Navegación</h2>
+            <a href="index.html" style="color: #4CAF50; text-decoration: none;">← Página Principal</a> | 
+            <a href="admin.html" style="color: #FF5722; text-decoration: none;">Panel Admin</a> | 
+            <a href="clear-storage.html" style="color: #ff4444; text-decoration: none;">Limpiar Storage</a>
+        </div>
+    </div>
+
+    <script>
+        // Cargar estado actual
+        function loadCurrentState() {
+            const files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+            const stats = JSON.parse(localStorage.getItem('winzap_stats')) || {
+                totalFiles: 0,
+                totalDownloads: 0,
+                visitorsToday: 0
+            };
+            const settings = JSON.parse(localStorage.getItem('winzap_settings')) || {};
+
+            // Actualizar estadísticas
+            document.getElementById('files-count').textContent = files.length;
+            document.getElementById('downloads-count').textContent = stats.totalDownloads || 0;
+            document.getElementById('visitors-count').textContent = stats.visitorsToday || 0;
+
+            // Mostrar lista de archivos
+            const filesList = document.getElementById('files-list');
+            if (files.length > 0) {
+                filesList.innerHTML = '<h4>Archivos actuales:</h4><ul>' + 
+                    files.map(file => `<li><strong>${file.title}</strong> (${file.category}) - ${file.downloads || 0} descargas</li>`).join('') + 
+                    '</ul>';
+            } else {
+                filesList.innerHTML = '<p style="opacity: 0.7;">No hay archivos guardados</p>';
+            }
+        }
+
+        // Exportar todos los datos
+        function exportData() {
+            const data = {
+                files: JSON.parse(localStorage.getItem('winzap_files')) || [],
+                stats: JSON.parse(localStorage.getItem('winzap_stats')) || {},
+                settings: JSON.parse(localStorage.getItem('winzap_settings')) || {},
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            const jsonString = JSON.stringify(data, null, 2);
+            downloadJSON(jsonString, 'winzap-backup-completo.json');
+            
+            document.getElementById('export-result').innerHTML = 
+                '<div class="success">✅ Datos exportados correctamente. Se descargó el archivo JSON.</div>';
+        }
+
+        // Exportar solo archivos
+        function exportFiles() {
+            const data = {
+                files: JSON.parse(localStorage.getItem('winzap_files')) || [],
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                type: 'files-only'
+            };
+
+            const jsonString = JSON.stringify(data, null, 2);
+            downloadJSON(jsonString, 'winzap-archivos.json');
+            
+            document.getElementById('export-result').innerHTML = 
+                '<div class="success">✅ Archivos exportados correctamente.</div>';
+        }
+
+        // Descargar JSON
+        function downloadJSON(jsonString, filename) {
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Importar datos
+        function importData() {
+            const importText = document.getElementById('import-data').value.trim();
+            const resultDiv = document.getElementById('import-result');
+
+            if (!importText) {
+                resultDiv.innerHTML = '<div class="error">❌ Por favor pega los datos a importar.</div>';
+                return;
+            }
+
+            try {
+                const data = JSON.parse(importText);
+                
+                if (data.files) {
+                    localStorage.setItem('winzap_files', JSON.stringify(data.files));
+                }
+                if (data.stats) {
+                    localStorage.setItem('winzap_stats', JSON.stringify(data.stats));
+                }
+                if (data.settings) {
+                    localStorage.setItem('winzap_settings', JSON.stringify(data.settings));
+                }
+
+                resultDiv.innerHTML = '<div class="success">✅ Datos importados correctamente. Recarga la página para ver los cambios.</div>';
+                
+                // Recargar estado
+                setTimeout(() => {
+                    loadCurrentState();
+                }, 1000);
+
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Error al importar: JSON inválido. Verifica el formato.</div>';
+            }
+        }
+
+        // Importar solo archivos
+        function importFiles() {
+            const importText = document.getElementById('import-data').value.trim();
+            const resultDiv = document.getElementById('import-result');
+
+            if (!importText) {
+                resultDiv.innerHTML = '<div class="error">❌ Por favor pega los datos a importar.</div>';
+                return;
+            }
+
+            if (!confirm('¿Estás seguro? Esto sobrescribirá todos los archivos actuales.')) {
+                return;
+            }
+
+            try {
+                const data = JSON.parse(importText);
+                
+                if (data.files) {
+                    localStorage.setItem('winzap_files', JSON.stringify(data.files));
+                    
+                    // Actualizar estadísticas
+                    const currentStats = JSON.parse(localStorage.getItem('winzap_stats')) || {};
+                    currentStats.totalFiles = data.files.length;
+                    localStorage.setItem('winzap_stats', JSON.stringify(currentStats));
+                }
+
+                resultDiv.innerHTML = '<div class="success">✅ Archivos importados correctamente. Recarga la página para ver los cambios.</div>';
+                
+                // Recargar estado
+                setTimeout(() => {
+                    loadCurrentState();
+                }, 1000);
+
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Error al importar: JSON inválido. Verifica el formato.</div>';
+            }
+        }
+
+        // Cargar al iniciar
+        window.onload = loadCurrentState;
+    </script>
+</body>
+</html>
