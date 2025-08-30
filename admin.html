@@ -5,7 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WINZAP - Panel de Administración</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        // Función de login
+        function adminLogin() {
+            const password = document.getElementById('admin-password').value;
+            const settings = JSON.parse(localStorage.getItem('winzap_settings')) || { adminPassword: 'admin123' };
+            
+            if (password === settings.adminPassword) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                showMessage('Acceso concedido', 'success');
+                loadAdminFiles();
+            } else {
+                showMessage('Contraseña incorrecta', 'error');
+                document.getElementById('admin-password').value = '';
+            }
+        }
+
+        // Función para mostrar mensajes
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.style.cssText = `
+                position: fixed; top: 20px; right: 20px; padding: 15px 20px;
+                border-radius: 5px; color: white; font-weight: bold; z-index: 10000;
+                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+            `;
+            document.body.appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 3000);
+        }
+
+        // Función para mostrar tabs
+        function showAdminTab(tabName) {
+            const tabs = document.querySelectorAll('.admin-tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) selectedTab.classList.add('active');
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const activeButton = document.querySelector(`[onclick="showAdminTab('${tabName}')"]`);
+            if (activeButton) activeButton.classList.add('active');
+        }
+
+        // Función para cargar archivos
+        function loadAdminFiles() {
+            const files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+            const adminFilesList = document.getElementById('admin-files-list');
+            
+            if (!adminFilesList) return;
+
+            if (files.length === 0) {
+                adminFilesList.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; opacity: 0.7;">
+                            <i class="fas fa-folder-open fa-2x"></i><br>
+                            No hay archivos para mostrar
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            adminFilesList.innerHTML = files.map(file => `
+                <tr>
+                    <td>
+                        <img src="${file.coverImage || file.image}" alt="${file.title}" 
+                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                    </td>
+                    <td><strong>${file.title}</strong></td>
+                    <td><span class="category-badge">${getCategoryName(file.category)}</span></td>
+                    <td><i class="fas fa-download"></i> ${file.downloads || 0}</td>
+                    <td>${file.uploadDate || new Date().toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="editFile(${file.id})" class="btn-edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteFile(${file.id})" class="btn-delete" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Función para obtener nombre de categoría
+        function getCategoryName(category) {
+            const categoryNames = {
+                'http-custom': 'HTTP CUSTOM',
+                'zivpn': 'ZIVPN',
+                'npv-tunnel': 'NPV TUNNEL',
+                'nexprime': 'NEXPRIME',
+                'http-injector': 'HTTP INJECTOR',
+                'acm-custom-socksip': 'ACM CUSTOM SOCKSIP',
+                'documentos': 'Documentos',
+                'software': 'Software',
+                'multimedia': 'Multimedia',
+                'recursos': 'Recursos'
+            };
+            return categoryNames[category] || category.toUpperCase();
+        }
+
+        // Función para eliminar archivo
+        function deleteFile(fileId) {
+            if (confirm('¿Estás seguro de que quieres eliminar este archivo?')) {
+                let files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+                files = files.filter(f => f.id !== fileId);
+                localStorage.setItem('winzap_files', JSON.stringify(files));
+                showMessage('Archivo eliminado', 'success');
+                loadAdminFiles();
+            }
+        }
+
+        // Función para editar archivo
+        function editFile(fileId) {
+            showMessage('Función de edición en desarrollo', 'info');
+        }
+    </script>
 </head>
 <body class="admin-body">
     <!-- Admin Header -->
@@ -294,133 +414,6 @@
     </footer>
 
     <script>
-        // Función de login inline
-        function adminLogin() {
-            const password = document.getElementById('admin-password').value;
-            const settings = JSON.parse(localStorage.getItem('winzap_settings')) || { adminPassword: 'admin123' };
-            
-            if (password === settings.adminPassword) {
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                
-                // Mostrar mensaje de éxito
-                showMessage('Acceso concedido', 'success');
-                
-                // Cargar archivos
-                loadAdminFiles();
-            } else {
-                showMessage('Contraseña incorrecta', 'error');
-                document.getElementById('admin-password').value = '';
-            }
-        }
-
-        // Función para mostrar mensajes
-        function showMessage(message, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                position: fixed; top: 20px; right: 20px; padding: 15px 20px;
-                border-radius: 5px; color: white; font-weight: bold; z-index: 10000;
-                background: ${type === 'success' ? '#4CAF50' : '#f44336'};
-            `;
-            document.body.appendChild(messageDiv);
-            setTimeout(() => messageDiv.remove(), 3000);
-        }
-
-        // Función para mostrar tabs
-        function showAdminTab(tabName) {
-            const tabs = document.querySelectorAll('.admin-tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            const selectedTab = document.getElementById(tabName + '-tab');
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-            }
-            
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            const activeButton = document.querySelector(`[onclick="showAdminTab('${tabName}')"]`);
-            if (activeButton) {
-                activeButton.classList.add('active');
-            }
-        }
-
-        // Función para cargar archivos
-        function loadAdminFiles() {
-            const files = JSON.parse(localStorage.getItem('winzap_files')) || [];
-            const adminFilesList = document.getElementById('admin-files-list');
-            
-            if (!adminFilesList) return;
-
-            if (files.length === 0) {
-                adminFilesList.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 2rem; opacity: 0.7;">
-                            <i class="fas fa-folder-open fa-2x"></i><br>
-                            No hay archivos para mostrar
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            adminFilesList.innerHTML = files.map(file => `
-                <tr>
-                    <td>
-                        <img src="${file.coverImage || file.image}" alt="${file.title}" 
-                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
-                    </td>
-                    <td><strong>${file.title}</strong></td>
-                    <td><span class="category-badge">${getCategoryName(file.category)}</span></td>
-                    <td><i class="fas fa-download"></i> ${file.downloads || 0}</td>
-                    <td>${file.uploadDate || new Date().toLocaleDateString()}</td>
-                    <td>
-                        <button onclick="editFile(${file.id})" class="btn-edit" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteFile(${file.id})" class="btn-delete" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Función para obtener nombre de categoría
-        function getCategoryName(category) {
-            const categoryNames = {
-                'http-custom': 'HTTP CUSTOM',
-                'zivpn': 'ZIVPN',
-                'npv-tunnel': 'NPV TUNNEL',
-                'nexprime': 'NEXPRIME',
-                'http-injector': 'HTTP INJECTOR',
-                'acm-custom-socksip': 'ACM CUSTOM SOCKSIP',
-                'documentos': 'Documentos',
-                'software': 'Software',
-                'multimedia': 'Multimedia',
-                'recursos': 'Recursos'
-            };
-            return categoryNames[category] || category.toUpperCase();
-        }
-
-        // Función para eliminar archivo
-        function deleteFile(fileId) {
-            if (confirm('¿Estás seguro de que quieres eliminar este archivo?')) {
-                let files = JSON.parse(localStorage.getItem('winzap_files')) || [];
-                files = files.filter(f => f.id !== fileId);
-                localStorage.setItem('winzap_files', JSON.stringify(files));
-                
-                showMessage('Archivo eliminado', 'success');
-                loadAdminFiles();
-            }
-        }
-
-        // Función para editar archivo
-        function editFile(fileId) {
-            showMessage('Función de edición en desarrollo', 'info');
-        }
-
         // Event listener para Enter en password
         document.addEventListener('DOMContentLoaded', function() {
             const passwordInput = document.getElementById('admin-password');
@@ -433,6 +426,5 @@
             }
         });
     </script>
-    <script src="admin-complete.js"></script>
 </body>
 </html>
