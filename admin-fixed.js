@@ -29,10 +29,10 @@ class AdminPanel {
     }
 
     setupEventListeners() {
-        // Event listeners para el admin
-        const uploadForm = document.getElementById('upload-form');
-        if (uploadForm) {
-            uploadForm.addEventListener('submit', (e) => {
+        // Admin upload form
+        const adminUploadForm = document.getElementById('admin-upload-form');
+        if (adminUploadForm) {
+            adminUploadForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 this.uploadFile();
             });
@@ -95,12 +95,12 @@ class AdminPanel {
     }
 
     uploadFile() {
-        const title = document.getElementById('file-title').value;
-        const description = document.getElementById('file-description').value;
-        const category = document.getElementById('file-category').value;
+        const title = document.getElementById('admin-title').value;
+        const description = document.getElementById('admin-description').value;
+        const category = document.getElementById('admin-category').value;
         const customCategory = document.getElementById('custom-category').value;
-        const fileInput = document.getElementById('file-upload');
-        const imageInput = document.getElementById('file-image');
+        const fileInput = document.getElementById('admin-file');
+        const imageInput = document.getElementById('admin-cover-image');
 
         if (!title || !description || !category) {
             this.showMessage('Por favor completa todos los campos obligatorios', 'error');
@@ -156,8 +156,11 @@ class AdminPanel {
         this.notifyOtherTabs();
         
         // Limpiar formulario
-        document.getElementById('upload-form').reset();
-        document.getElementById('custom-category').style.display = 'none';
+        document.getElementById('admin-upload-form').reset();
+        const customCategoryDiv = document.getElementById('custom-category');
+        if (customCategoryDiv) {
+            customCategoryDiv.style.display = 'none';
+        }
     }
 
     formatFileSize(bytes) {
