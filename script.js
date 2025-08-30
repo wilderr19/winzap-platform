@@ -1,33 +1,62 @@
 // WINZAP GAMER - JavaScript Principal
 class WinzapGamer {
     constructor() {
-        this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
-        this.stats = JSON.parse(localStorage.getItem('winzap_stats')) || {
+        this.files = [];
+        this.stats = {
             totalFiles: 0,
             totalDownloads: 0,
             visitorsToday: 0
         };
+        this.firebaseManager = null;
         
         this.init();
     }
 
-    init() {
+    async init() {
         this.setupEventListeners();
-        this.loadFiles();
-        this.setupStorageSync();
         
-        // Actualizar archivos cuando hay cambios
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'winzap_files') {
-                this.refreshFiles();
+        // Inicializar Firebase
+        if (window.FirebaseManager) {
+            this.firebaseManager = new window.FirebaseManager();
+            const initialized = await this.firebaseManager.init();
+            
+            if (initialized) {
+                console.log('🔥 Firebase conectado - usando base de datos en la nube');
+                this.loadFilesFromFirebase();
+            } else {
+                console.log('📱 Firebase no disponible - usando localStorage');
+                this.loadFilesFromLocal();
             }
-        });
+        } else {
+            console.log('📱 Firebase no disponible - usando localStorage');
+            this.loadFilesFromLocal();
+        }
+        
+        this.setupStorageSync();
     }
 
-    // Actualizar archivos cuando cambie localStorage
-    refreshFiles() {
+    // Cargar archivos desde Firebase
+    loadFilesFromFirebase() {
+        if (this.firebaseManager) {
+            this.firebaseManager.getFiles((files) => {
+                this.files = files;
+                this.loadFiles();
+            });
+        }
+    }
+
+    // Cargar archivos desde localStorage (fallback)
+    loadFilesFromLocal() {
         this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
         this.loadFiles();
+        
+        // Escuchar cambios en localStorage
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'winzap_files') {
+                this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+                this.loadFiles();
+            }
+        });
     }
 
     setupEventListeners() {

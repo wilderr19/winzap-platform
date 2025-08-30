@@ -1,15 +1,15 @@
 // Firebase Configuration for WINZAP
 // Configuración de Firebase para base de datos en la nube
 
-// Configuración Firebase (necesitas crear proyecto en Firebase Console)
+// Configuración Firebase - Proyecto winzap-platform
 const firebaseConfig = {
-    apiKey: "TU_API_KEY_AQUI",
+    apiKey: "AIzaSyDMkxufy28KpSWQqMxVqaT73BRUQDBzCXw",
     authDomain: "winzap-platform.firebaseapp.com",
-    databaseURL: "https://winzap-platform-default-rtdb.firebaseio.com",
     projectId: "winzap-platform",
-    storageBucket: "winzap-platform.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
+    storageBucket: "winzap-platform.firebasestorage.app",
+    messagingSenderId: "1062749277641",
+    appId: "1:1062749277641:web:b98161c61d754614c7ec18",
+    measurementId: "G-9JXH5L6DTM"
 };
 
 class FirebaseManager {
@@ -22,13 +22,13 @@ class FirebaseManager {
     async init() {
         try {
             // Importar Firebase modules
-            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js');
-            const { getDatabase, ref, push, set, onValue, remove } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js');
-            const { getStorage, ref: storageRef, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js');
+            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js');
+            const { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
+            const { getStorage, ref: storageRef, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js');
 
             // Inicializar Firebase
             const app = initializeApp(firebaseConfig);
-            this.db = getDatabase(app);
+            this.db = getFirestore(app);
             this.storage = getStorage(app);
             this.initialized = true;
 
@@ -76,17 +76,17 @@ class FirebaseManager {
         }
     }
 
-    // Guardar metadatos del archivo en Realtime Database
+    // Guardar metadatos del archivo en Firestore
     async saveFileMetadata(fileData) {
         if (!this.initialized) return null;
         
         try {
-            const { ref, push } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js');
+            const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
             
-            const filesRef = ref(this.db, 'files');
-            const newFileRef = await push(filesRef, fileData);
+            const filesCollection = collection(this.db, 'files');
+            const docRef = await addDoc(filesCollection, fileData);
             
-            return newFileRef.key;
+            return docRef.id;
         } catch (error) {
             console.error('Error guardando metadatos:', error);
             return null;
@@ -98,15 +98,17 @@ class FirebaseManager {
         if (!this.initialized) return;
         
         try {
-            const { ref, onValue } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js');
+            const { collection, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
             
-            const filesRef = ref(this.db, 'files');
-            onValue(filesRef, (snapshot) => {
-                const data = snapshot.val();
-                const files = data ? Object.keys(data).map(key => ({
-                    id: key,
-                    ...data[key]
-                })) : [];
+            const filesCollection = collection(this.db, 'files');
+            onSnapshot(filesCollection, (snapshot) => {
+                const files = [];
+                snapshot.forEach((doc) => {
+                    files.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
                 callback(files);
             });
         } catch (error) {
@@ -120,10 +122,10 @@ class FirebaseManager {
         if (!this.initialized) return false;
         
         try {
-            const { ref, remove } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js');
+            const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
             
-            const fileRef = ref(this.db, `files/${fileId}`);
-            await remove(fileRef);
+            const fileRef = doc(this.db, 'files', fileId);
+            await deleteDoc(fileRef);
             
             return true;
         } catch (error) {
@@ -137,10 +139,10 @@ class FirebaseManager {
         if (!this.initialized) return;
         
         try {
-            const { ref, set } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js');
+            const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
             
-            const statsRef = ref(this.db, 'stats');
-            await set(statsRef, stats);
+            const statsRef = doc(this.db, 'stats', 'global');
+            await setDoc(statsRef, stats);
         } catch (error) {
             console.error('Error actualizando estadísticas:', error);
         }
@@ -151,11 +153,11 @@ class FirebaseManager {
         if (!this.initialized) return;
         
         try {
-            const { ref, onValue } = await import('https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js');
+            const { doc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
             
-            const statsRef = ref(this.db, 'stats');
-            onValue(statsRef, (snapshot) => {
-                const stats = snapshot.val() || {
+            const statsRef = doc(this.db, 'stats', 'global');
+            onSnapshot(statsRef, (snapshot) => {
+                const stats = snapshot.exists() ? snapshot.data() : {
                     totalFiles: 0,
                     totalDownloads: 0,
                     visitorsToday: 0
