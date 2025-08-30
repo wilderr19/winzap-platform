@@ -1,0 +1,25 @@
+{
+  "name": "WINZAP - Plataforma de Archivos",
+  "short_name": "WINZAP",
+  "description": "Plataforma para descargar archivos de configuración VPN y herramientas gaming",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff6b35",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/ff6b35/ffffff?text=W",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/ff6b35/ffffff?text=W",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "es",
+  "dir": "ltr"
+}

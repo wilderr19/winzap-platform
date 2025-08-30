@@ -836,6 +836,30 @@ body {
     transform: translateY(-2px);
 }
 
+/* Mobile Optimizations */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Touch-friendly buttons */
+button, .btn, .download-btn {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+}
+
 /* Responsive modal */
 @media (max-width: 768px) {
     .modal-content {
