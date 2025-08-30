@@ -33,7 +33,7 @@ app.use(helmet({
 
 app.use(compression());
 app.use(cors({
-    origin: ['https://winzapgamer.github.io', 'http://localhost:3000', 'https://tu-dominio.com'],
+    origin: ['https://winzapg.online', 'https://www.winzapg.online', 'https://wilderr19.github.io', 'http://localhost:3000'],
     credentials: true
 }));
 app.use(limiter);

@@ -16,20 +16,22 @@ class WinzapGamer {
         this.setupEventListeners();
         
         // Verificar conexión con VPS API
-        if (window.apiConfig) {
-            const health = await window.apiConfig.checkHealth();
-            if (health.status === 'OK') {
-                console.log('🌐 VPS API conectado - usando servidor remoto');
-                this.loadFilesFromAPI();
-                this.registerVisit();
-            } else {
+        if (window.apiConfig && window.apiConfig.baseURL) {
+            try {
+                const health = await window.apiConfig.checkHealth();
+                if (health.status === 'OK') {
+                    console.log('🌐 VPS API conectado - usando servidor remoto');
+                    this.loadFilesFromAPI();
+                    this.registerVisit();
+                    return;
+                }
+            } catch (error) {
                 console.log('⚠️ VPS API no disponible, intentando Firebase...');
-                this.initFirebaseBackup();
             }
-        } else {
-            this.initFirebaseBackup();
         }
         
+        // Usar Firebase como principal hasta tener VPS
+        this.initFirebaseBackup();
         this.setupStorageSync();
     }
 
