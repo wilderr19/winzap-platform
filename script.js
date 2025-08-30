@@ -1,63 +1,7 @@
 // WINZAP GAMER - JavaScript Principal
 class WinzapGamer {
     constructor() {
-        // Archivos estáticos que siempre están disponibles
-        this.staticFiles = [
-            {
-                id: 1001,
-                title: "HTTP Custom VIP Premium",
-                category: "http-custom",
-                description: "Configuración HTTP Custom optimizada para conexiones VIP con servidores premium. Incluye múltiples payloads y configuraciones avanzadas.",
-                image: "https://via.placeholder.com/300x200/ff6b35/ffffff?text=HTTP+CUSTOM",
-                coverImage: "https://via.placeholder.com/300x200/ff6b35/ffffff?text=HTTP+CUSTOM",
-                fileName: "http_custom_vip.hc",
-                fileSize: 2048,
-                uploadDate: "25/08/2024",
-                downloads: 127,
-                fileUrl: "data:text/plain;base64,SGVsbG8gV29ybGQh"
-            },
-            {
-                id: 1002,
-                title: "ZIVPN Pro Config 2024",
-                category: "zivpn",
-                description: "Configuración ZIVPN Pro actualizada para 2024. Servidores optimizados y alta velocidad garantizada.",
-                image: "https://via.placeholder.com/300x200/2196f3/ffffff?text=ZIVPN+PRO",
-                coverImage: "https://via.placeholder.com/300x200/2196f3/ffffff?text=ZIVPN+PRO",
-                fileName: "zivpn_pro_2024.ziv",
-                fileSize: 1536,
-                uploadDate: "23/08/2024",
-                downloads: 89,
-                fileUrl: "data:text/plain;base64,WklWUE4gUHJvIENvbmZpZw=="
-            },
-            {
-                id: 1003,
-                title: "NPV Tunnel Ultimate",
-                category: "npv-tunnel",
-                description: "NPV Tunnel con configuraciones ultimate. Bypass avanzado y conexiones estables para gaming y streaming.",
-                image: "https://via.placeholder.com/300x200/4caf50/ffffff?text=NPV+TUNNEL",
-                coverImage: "https://via.placeholder.com/300x200/4caf50/ffffff?text=NPV+TUNNEL",
-                fileName: "npv_tunnel_ultimate.npv",
-                fileSize: 2560,
-                uploadDate: "20/08/2024",
-                downloads: 156,
-                fileUrl: "data:text/plain;base64,TlBWIFR1bm5lbCBVbHRpbWF0ZQ=="
-            },
-            {
-                id: 1004,
-                title: "HTTP Injector Elite Pack",
-                category: "http-injector",
-                description: "Pack elite de configuraciones HTTP Injector. Múltiples servidores y payloads optimizados para diferentes operadores.",
-                image: "https://via.placeholder.com/300x200/9c27b0/ffffff?text=HTTP+INJECTOR",
-                coverImage: "https://via.placeholder.com/300x200/9c27b0/ffffff?text=HTTP+INJECTOR",
-                fileName: "http_injector_elite.ehi",
-                fileSize: 1792,
-                uploadDate: "18/08/2024",
-                downloads: 203,
-                fileUrl: "data:text/plain;base64=SFRUUCBJbmplY3RvciBFbGl0ZQ=="
-            }
-        ];
-
-        this.loadAllFiles();
+        this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
         this.stats = JSON.parse(localStorage.getItem('winzap_stats')) || {
             totalFiles: 0,
             totalDownloads: 0,
@@ -82,7 +26,7 @@ class WinzapGamer {
 
     // Actualizar archivos cuando cambie localStorage
     refreshFiles() {
-        this.loadAllFiles();
+        this.files = JSON.parse(localStorage.getItem('winzap_files')) || [];
         this.loadFiles();
     }
 
@@ -208,24 +152,6 @@ class WinzapGamer {
         });
     }
 
-    // Función para cargar archivos estáticos + localStorage
-    loadAllFiles() {
-        // Combinar archivos estáticos con localStorage
-        const storedFiles = localStorage.getItem('winzap_files');
-        let localFiles = [];
-        
-        if (storedFiles) {
-            localFiles = JSON.parse(storedFiles);
-        }
-        
-        // Combinar archivos: primero los de localStorage (más recientes), luego los estáticos
-        this.files = [...localFiles, ...this.staticFiles];
-        
-        // Eliminar duplicados por ID
-        this.files = this.files.filter((file, index, self) => 
-            index === self.findIndex(f => f.id === file.id)
-        );
-    }
 
     loadFiles() {
         console.log('Cargando archivos:', this.files);
