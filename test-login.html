@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - WINZAP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 50px;
+            text-align: center;
+        }
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Login WINZAP</h1>
+        <p>Página de prueba para verificar funciones JavaScript</p>
+        
+        <input type="password" id="test-password" placeholder="Contraseña: admin123">
+        <button onclick="testLogin()">Probar Login</button>
+        
+        <div id="message" class="message"></div>
+        
+        <div style="margin-top: 30px; font-size: 14px; opacity: 0.7;">
+            <p>Esta página verifica que las funciones JavaScript funcionen correctamente</p>
+            <p>Contraseña de prueba: <strong>admin123</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function testLogin() {
+            console.log('testLogin() ejecutada');
+            
+            const password = document.getElementById('test-password').value;
+            const messageDiv = document.getElementById('message');
+            
+            console.log('Password ingresada:', password);
+            
+            if (password === 'admin123') {
+                showTestMessage('✅ Login exitoso! Las funciones JavaScript funcionan correctamente.', 'success');
+                console.log('Login exitoso');
+            } else {
+                showTestMessage('❌ Contraseña incorrecta. Intenta con: admin123', 'error');
+                console.log('Login fallido');
+            }
+        }
+        
+        function showTestMessage(message, type) {
+            console.log('showTestMessage() ejecutada:', message, type);
+            
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = 'message ' + type;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Test al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Página de test cargada correctamente');
+            console.log('✅ Funciones JavaScript disponibles');
+            
+            // Test automático
+            setTimeout(() => {
+                showTestMessage('🔧 Página de test lista. Ingresa "admin123" para probar.', 'success');
+            }, 1000);
+        });
+        
+        // Enter key support
+        document.getElementById('test-password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testLogin();
+            }
+        });
+    </script>
+</body>
+</html>
