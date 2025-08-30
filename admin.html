@@ -14,14 +14,19 @@
             const settings = JSON.parse(localStorage.getItem('winzap_settings')) || { adminPassword: 'admin123' };
             
             if (password === settings.adminPassword) {
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('admin-login').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
                 showMessage('Acceso concedido', 'success');
                 loadAdminFiles();
             } else {
                 showMessage('Contraseña incorrecta', 'error');
                 document.getElementById('admin-password').value = '';
             }
+        }
+
+        // Función alternativa para manejar login
+        function handleLogin() {
+            adminLogin();
         }
 
         // Función para mostrar mensajes
@@ -156,8 +161,8 @@
                         <h2>Panel de Administración</h2>
                         <p>WINZAP</p>
                     </div>
-                    <input type="password" id="admin-password" placeholder="Contraseña de administrador" onkeypress="if(event.key==='Enter') adminLogin()">
-                    <button onclick="adminLogin()" class="login-btn">
+                    <input type="password" id="admin-password" placeholder="Contraseña de administrador" onkeypress="if(event.key==='Enter') handleLogin()">
+                    <button type="button" onclick="handleLogin()" class="btn-login">
                         <i class="fas fa-sign-in-alt"></i> Acceder
                     </button>
                 </div>
