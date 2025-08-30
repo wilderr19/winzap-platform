@@ -130,6 +130,114 @@
         function editFile(fileId) {
             showMessage('Función de edición en desarrollo', 'info');
         }
+
+        // Función para subir archivo
+        function uploadFile(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('admin-upload-form');
+            const formData = new FormData(form);
+            
+            const title = document.getElementById('admin-title').value;
+            const category = document.getElementById('admin-category').value;
+            const description = document.getElementById('admin-description').value;
+            const coverImageFile = document.getElementById('admin-cover-image').files[0];
+            const uploadFile = document.getElementById('admin-file').files[0];
+            
+            if (!title || !description || !coverImageFile || !uploadFile) {
+                showMessage('Por favor completa todos los campos', 'error');
+                return;
+            }
+            
+            // Crear objeto de archivo
+            const fileId = Date.now();
+            const fileObj = {
+                id: fileId,
+                title: title,
+                category: category,
+                description: description,
+                fileName: uploadFile.name,
+                fileSize: uploadFile.size,
+                uploadDate: new Date().toLocaleDateString(),
+                downloads: 0
+            };
+            
+            // Procesar imagen de portada
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fileObj.coverImage = e.target.result;
+                fileObj.image = e.target.result;
+                
+                // Procesar archivo principal
+                const fileReader = new FileReader();
+                fileReader.onload = function(fe) {
+                    fileObj.fileUrl = fe.target.result;
+                    
+                    // Guardar en localStorage
+                    let files = JSON.parse(localStorage.getItem('winzap_files')) || [];
+                    files.unshift(fileObj);
+                    localStorage.setItem('winzap_files', JSON.stringify(files));
+                    
+                    // Actualizar estadísticas
+                    const stats = JSON.parse(localStorage.getItem('winzap_stats')) || {
+                        totalFiles: 0,
+                        totalDownloads: 0,
+                        visitorsToday: 0
+                    };
+                    stats.totalFiles = files.length;
+                    localStorage.setItem('winzap_stats', JSON.stringify(stats));
+                    
+                    // Mostrar mensaje de éxito
+                    showMessage('Archivo subido exitosamente', 'success');
+                    
+                    // Limpiar formulario
+                    form.reset();
+                    document.getElementById('admin-image-preview').innerHTML = '';
+                    document.getElementById('admin-file-info').innerHTML = '';
+                    
+                    // Actualizar lista de archivos si estamos en esa pestaña
+                    loadAdminFiles();
+                };
+                
+                fileReader.readAsDataURL(uploadFile);
+            };
+            
+            reader.readAsDataURL(coverImageFile);
+        }
+
+        // Función para vista previa de imagen
+        function previewImage(input) {
+            const preview = document.getElementById('admin-image-preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: 5px;">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Función para mostrar info del archivo
+        function showFileInfo(input) {
+            const fileInfo = document.getElementById('admin-file-info');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                fileInfo.innerHTML = `
+                    <div style="padding: 10px; background: #333; border-radius: 5px; margin-top: 10px;">
+                        <strong>Archivo:</strong> ${file.name}<br>
+                        <strong>Tamaño:</strong> ${size} MB<br>
+                        <strong>Tipo:</strong> ${file.type || 'Desconocido'}
+                    </div>
+                `;
+            }
+        }
+
+        // Función para actualizar lista de archivos
+        function refreshFilesList() {
+            loadAdminFiles();
+            showMessage('Lista de archivos actualizada', 'success');
+        }
     </script>
 </head>
 <body class="admin-body">
@@ -225,7 +333,7 @@
             <div id="upload-tab" class="admin-tab-content active">
                 <div class="upload-section-admin">
                     <h3><i class="fas fa-cloud-upload-alt"></i> Subir Nuevo Archivo</h3>
-                    <form id="admin-upload-form" class="upload-form">
+                    <form id="admin-upload-form" class="upload-form" onsubmit="uploadFile(event)">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="admin-title">Título del archivo:</label>
@@ -260,13 +368,13 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="admin-cover-image">Imagen de portada:</label>
-                                <input type="file" id="admin-cover-image" name="cover-image" accept="image/*" required>
+                                <input type="file" id="admin-cover-image" name="cover-image" accept="image/*" onchange="previewImage(this)" required>
                                 <div class="image-preview" id="admin-image-preview"></div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="admin-file">Archivo a subir:</label>
-                                <input type="file" id="admin-file" name="file" required>
+                                <input type="file" id="admin-file" name="file" onchange="showFileInfo(this)" required>
                                 <div class="file-info" id="admin-file-info"></div>
                             </div>
                         </div>
